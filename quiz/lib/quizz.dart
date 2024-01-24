@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quiz/finalQuiz.dart';
 
 class Quiz extends StatefulWidget {
   const Quiz({super.key});
@@ -12,6 +13,7 @@ class _QuizState extends State<Quiz> {
   int currentQuestionIndex = 0;//indice da pergunta atual
   String? selectedAnswer;
   bool?isCorrect;
+  int pontos =0;
   final List<Map<String,dynamic>> questions = [
     {
        'question': 'Qual desses é o animal mais rápido no ambiente maritimo?',
@@ -39,14 +41,18 @@ class _QuizState extends State<Quiz> {
       selectedAnswer=answer;
       isCorrect=answer == questions[currentQuestionIndex]['correctAnswer'];
     });
-    Future.delayed(Duration(seconds: 2),(){
+    Future.delayed(Duration(milliseconds: 250),(){
       setState(() {
         selectedAnswer=null;
         isCorrect=null;
         if(currentQuestionIndex<questions.length-1){
           currentQuestionIndex++;
         }else{
-          //fim do quiz,fazer algo
+            Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => FinalQuiz(pontuacao:pontos ), // Substitua FinalQuiz() pelo nome correto da sua página
+      ),
+    );
         }
       });
     });
@@ -58,9 +64,10 @@ class _QuizState extends State<Quiz> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple[50],
-        title: Text('Quiz Marítimo!',style:GoogleFonts.roboto(fontWeight: FontWeight.bold)),
+        title: Text('Quiz Marítimo!    Pontuação:${pontos} pontos',style:GoogleFonts.roboto(fontWeight: FontWeight.bold)),
       ),
-      body: Column(
+      body: 
+      Column(
         children: [
           Container(
             color: Colors.deepPurple[50],
@@ -71,12 +78,30 @@ class _QuizState extends State<Quiz> {
               style: GoogleFonts.roboto(fontWeight: FontWeight.bold,fontSize: 18),),
               ),
           ),
+       /*    Column(
+        children: [
+          Container(
+            color: Colors.deepPurple[50],
+            width: double.infinity,
+            height: 400,
+            child: Column(
+              children: [
+                Text(currentQuestion['question'],
+                style: GoogleFonts.roboto(fontWeight: FontWeight.bold,fontSize: 18),),
+                 Text(currentQuestion['question'],
+                style: GoogleFonts.roboto(fontWeight: FontWeight.bold,fontSize: 18),),
+              ],
+            ),
+          ),*/
           Wrap(
             children:currentQuestion['answers'].map<Widget>((resposta){
               bool isSelected = selectedAnswer == resposta;
               Color? buttonColor;
               if(isSelected){
                 buttonColor = isCorrect! ? Colors.green:Colors.red;
+                if(buttonColor== Colors.green){
+                  pontos= pontos+750;
+                }
               }
 
               return meuBtn3(
